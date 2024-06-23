@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Create directory</h1>
+<form method="POST" enctype="multipart/form-data">
+    <div>
+        <label for="directory name">Subfolder:</label>
+        <input type="text" id="foldername" name="foldername">
+    </div>
+    <button type="submit">Create directory</button>
+</form>
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+<ul>
+    {% for category, message in messages %}
+    <li class="{{ category }}">{{ message }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+{% endwith %}
+{% endblock %}

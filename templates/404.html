@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Not Found</title>
+    <style>
+        body {
+            background: black;
+            color: red;
+        }
+
+        .blinking {
+            transition: background 0.1s ease;
+            transition: color 0.1s ease;
+        }
+
+        #image {
+            width: 300px;
+            /* Ajusta el tamaño según tus necesidades */
+
+            /* Transición suave */
+        }
+
+        .binarized {
+            filter: grayscale(1) contrast(100);
+        }
+    </style>
+</head>
+
+<body class="blinking">
+    <center>
+        <h1 class="blinking">Not Found :(</h1>
+        <p class="blinking">{{error}}</p>
+        <p class="blinking">
+            Has accedido a algo que no debías ver, tu alma de ahora en adelante estará condenada a la intranquilidad y
+            un sufrimiento constante que sólo podrás aliviar con una muerte atroz.
+            En breve enviaremos a nuestros seguidores por tí, salve el dios Molloch, nuestro único dios verdadero, a
+            quien dedicamos nuestros sacrificios cada semana en el agujero de conejo, luego de escuchar nuestras
+            historias.
+        </p>
+        <div>
+            <img id="image" src="https://proyectoidis.org/wp-content/uploads/2015/07/22-savilethatcher-gt.jpg" alt="">
+        </div>
+
+        <div>
+            <a href="{{ url_for('File.list_files') }}">Back to the light</a>
+        </div>
+    </center>
+    <script>
+        function blinkText() {
+            const elements = document.querySelectorAll('.blinking');
+            elements.forEach(element => {
+                if (element.style.background === 'red') {
+                    element.style.background = 'black';
+                    element.style.color = 'red';
+                } else {
+                    element.style.background = 'red';
+                    element.style.color = 'white';
+                }
+            });
+        }
+
+        setInterval(blinkText, 500);
+
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const image = document.getElementById('image');
+            let isBinarized = false;
+
+            setInterval(() => {
+                if (isBinarized) {
+                    image.classList.remove('binarized');
+                } else {
+                    image.classList.add('binarized');
+                }
+                isBinarized = !isBinarized;
+            }, 500);
+        });
+    </script>
+</body>
+
+</html>
