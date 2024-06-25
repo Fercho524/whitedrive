@@ -3,6 +3,7 @@ from dotenv import dotenv_values
 
 env = dotenv_values(".flaskenv")
 
+print(env)
 
 class Config:
     SECRET_KEY='secret_key123'
@@ -11,17 +12,17 @@ class Config:
 class DevelopmentConfig(Config):
     DEBUG = True    
     FLASKCONFIG="DEV"
-    SQLALCHEMY_DATABASE_URI="postgresql://postgres:524835@localhost/wdrive"
+    SQLALCHEMY_DATABASE_URI=f"postgresql://postgres:{env['DBPASSWORD']}@{env['DBHOST']}/{env['DBNAME']}"
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    UPLOAD_FOLDER='/home/fercho/Downloads/uploads'
+    UPLOAD_FOLDER=env['UPLOADS_FOLDER']
 
 
 class TestConfig(Config):
     DEBUG = False  
     FLASKCONFIG="TEST"  
-    SQLALCHEMY_DATABASE_URI="postgresql://postgres:524835@localhost/wdrive_test"
+    SQLALCHEMY_DATABASE_URI=f"postgresql://postgres:{env['DBPASSWORD']}@{env['DBHOST']}/{env['DBNAME']}"
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    UPLOADS_FOLDER="/home/fercho/Downloads/uploads"
+    UPLOADS_FOLDER=env['UPLOADS_FOLDER']
 
 
 config_dict = {
@@ -29,6 +30,4 @@ config_dict = {
     "test" : TestConfig
 }
 
-
 config = config_dict[env["CONFIG"]]
-

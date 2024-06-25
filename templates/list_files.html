@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
+
 <h2>Listado de Archivos y Directorios</h2>
 
 <form method="POST" action="{{ url_for('File.list_files') }}">
@@ -27,8 +28,6 @@
     <li>
         <a href="#" onclick="navigateToFolder('{{ currentdir }}', '{{ file.filename }}')">{{ file.filename }}</a>
         <button onclick="openRenameModal('{{ file.id }}')">Renombrar</button>
-        <!-- <button onclick="openCopyModal('{{ file.id }}')">Copiar</button>
-        <button onclick="openMoveModal('{{ file.id }}')">Mover</button> -->
         <a href="{{ url_for('File.download_file', file_id=file.id) }}">Descargar</a>
 
         <form method="POST" action="{{ url_for('File.delete_file', file_id=file.id) }}">
@@ -45,28 +44,6 @@
                 </form>
             </div>
         </div>
-
-        <!-- <div id="copyModal{{ file.id }}" class="modal">
-            <div class="modal-content">
-                <span class="close" onclick="closeCopyModal('{{ file.id }}')">&times;</span>
-                <form method="POST" action="{{ url_for('File.copy_file', file_id=file.id) }}">
-                    <label for="destination">Destino:</label>
-                    <input type="text" id="destination" name="destination" required>
-                    <button type="submit">Copiar</button>
-                </form>
-            </div>
-        </div>
-
-        <div id="moveModal{{ file.id }}" class="modal">
-            <div class="modal-content">
-                <span class="close" onclick="closeMoveModal('{{ file.id }}')">&times;</span>
-                <form method="POST" action="{{ url_for('File.move_file', file_id=file.id) }}">
-                    <label for="destination">Destino:</label>
-                    <input type="text" id="destination" name="destination" required>
-                    <button type="submit">Mover</button>
-                </form>
-            </div>
-        </div> -->
     </li>
     {% endfor %}
 </ul>

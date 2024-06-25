@@ -43,3 +43,15 @@ flask db upgrade
 ```sh
 python run.py
 ```
+
+## Configuración
+
+Por defecto la configuración está en desarrollo, pero esta se puede cambiar en el archivo .flaskenv, por defecto trae la siguiente configuración:
+
+```
+CONFIG=development
+DBPASSWORD=524835
+DBHOST=localhost
+DBNAME=wdrive
+UPLOADS_FOLDER=/home/fercho/Downloads/uploads
+```
