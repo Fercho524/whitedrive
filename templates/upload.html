@@ -1,26 +1,35 @@
 {% extends "base.html" %}
+
+{% block title %}Upload File{% endblock %}
+
 {% block content %}
+<div class="upload-file-form">
+    <h1>Upload File</h1>
 
-<h1>Upload File</h1>
-<form method="POST" enctype="multipart/form-data">
-    <div>
-        <label for="subfolder">Subfolder:</label>
-        <input type="text" id="subfolder" name="subfolder">
-    </div>
-    <div>
-        <label for="file">File:</label>
-        <input type="file" id="file" name="file" required>
-    </div>
-    <button type="submit">Upload</button>
-</form>
-{% with messages = get_flashed_messages(with_categories=true) %}
-{% if messages %}
-<ul>
-    {% for category, message in messages %}
-    <li class="{{ category }}">{{ message }}</li>
-    {% endfor %}
-</ul>
-{% endif %}
-{% endwith %}
+    <form method="POST" enctype="multipart/form-data" action="{{ url_for('File.upload_file') }}">
+        {{ form.hidden_tag() }}
+        
+        <div class="form-group">
+            <label for="subfolder">Subfolder:</label>
+            <input type="text" id="subfolder" name="subfolder" class="form-control" placeholder="Enter subfolder (optional)">
+        </div>
+        
+        <div class="form-group">
+            <label for="file">File:</label>
+            <input type="file" id="file" name="file" class="form-control-file" required>
+        </div>
+        
+        <button type="submit" class="btn btn-primary">Upload</button>
+    </form>
 
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <ul>
+        {% for category, message in messages %}
+        <li class="flash {{ category }}">{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    {% endwith %}
+</div>
 {% endblock %}
