@@ -1,4 +1,4 @@
-from app import create_app, db
+from create_app import create_app, db
 from flask_migrate import Migrate
 from config import config
 
