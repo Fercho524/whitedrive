@@ -5,32 +5,62 @@
     <meta charset="UTF-8">
     <title>{% block title %}Simple Drive{% endblock %}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
-<body>
-    <nav>
-        <h1><a href="{{ url_for('File.list_files') }}">White Drive</a></h1>
-        <ul>
-            {% if current_user.is_authenticated %}
-            <li><a href="{{ url_for('Auth.account') }}">Información de la cuenta</a></li>
-            <li><a href="{{ url_for('Auth.logout') }}">Salir</a></li>
-            {% else %}
-            <li><a href="{{ url_for('Auth.login') }}">Iniciar sesión</a></li>
-            <li><a href="{{ url_for('Auth.register') }}">Crea una cuenta gratuita</a></li>
-            {% endif %}
-        </ul>
-        <hr>
+<body class="bg-gray-100 text-gray-900">
+    <nav class="bg-white shadow-md">
+        <div class="container mx-auto px-6 py-3 flex justify-between items-center">
+            <div class="flex items-center">
+                <a href="{{ url_for('File.list_files') }}" class="text-2xl font-bold text-sky-blue">
+                    <img src="{{ url_for('static', filename='logo.png') }}" alt="WhiteDrive Logo"
+                        class="h-8 w-8 inline-block mr-2">
+                    WhiteDrive
+                </a>
+            </div>
+            <ul class="flex space-x-4">
+                {% if current_user.is_authenticated %}
+                <li>
+                    <a href="{{ url_for('Auth.account') }}" class="text-gray-700 hover:text-sky-blue">Información de la
+                        cuenta
+                    </a>
+                </li>
+                <li><a href="{{ url_for('Auth.logout') }}" class="text-gray-700 hover:text-sky-blue">Salir</a></li>
+                {% else %}
+                <li><a href="{{ url_for('Auth.login') }}" class="text-gray-700 hover:text-sky-blue">Iniciar sesión</a>
+                </li>
+                <li><a href="{{ url_for('Auth.register') }}" class="text-gray-700 hover:text-sky-blue">Crea una cuenta
+                        gratuita</a></li>
+                {% endif %}
+            </ul>
+        </div>
     </nav>
-    <main class="container">
+
+
+
+    <main class="container mx-auto px-6 py-8">
         {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
-        {% for category, message in messages %}
-        <div class="flash {{ category }}">{{ message }}</div>
-        {% endfor %}
+        <div class="mb-4">
+            {% for category, message in messages %}
+            <div onclick="closeBtn(event)"
+                class="flash bg-{{ 'red' if category == 'danger' else 'green' }}-100 border border-{{ 'red' if category == 'danger' else 'green' }}-400 text-{{ 'red' if category == 'danger' else 'green' }}-700 px-4 py-3 rounded relative mb-2"
+                role="alert">
+                <span class="block sm:inline">{{ message }}</span>
+            </div>
+            {% endfor %}
+        </div>
         {% endif %}
         {% endwith %}
         {% block content %}{% endblock %}
     </main>
+
+    <script>
+        function closeBtn(e) {
+            e = e || window.event;
+            e.target.style.display = 'none';
+        }
+    </script>
 </body>
 
 </html>

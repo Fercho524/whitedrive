@@ -1,0 +1,240 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2>Listado de Archivos y Directorios</h2>
+
+<form method="POST" action="{{ url_for('File.list_files') }}">
+    <div>
+        <label for="filepath">Ruta del Archivo/Directorio</label><br>
+        <input type="text" id="filepath" name="filepath" value="{{ currentdir }}">
+        <button id="getfiles" type="submit">Listar</button>
+    </div>
+</form>
+
+<div>
+    <button onclick="showModal('createDirectoryModal')">Crear Nueva Carpeta</button>
+    <button onclick="showModal('uploadFileModal')">Subir Nuevo Archivo</button>
+</div>
+
+{% if files %}
+<h3>Directorios</h3>
+<ul>
+    {% if currentdir != '' %}
+    <li>
+        <a href="#" onclick="goUpOneLevel('{{ currentdir }}')"><strong>.. (Subir un nivel)</strong></a>
+    </li>
+    {% endif %}
+    {% for file in files if file.file_type == 'folder' %}
+    <li>
+        <a href="#" onclick="navigateToFolder('{{ currentdir }}', '{{ file.filename }}')">{{ file.filename }}</a>
+        <button onclick="openRenameModal('{{ file.id }}')">Renombrar</button>
+        <a href="{{ url_for('File.download_file', file_id=file.id) }}">Descargar</a>
+
+        <form method="POST" action="{{ url_for('File.delete_file', file_id=file.id) }}">
+            <button type="submit" class="btn btn-danger">Eliminar</button>
+        </form>
+
+        <div id="renameModal{{ file.id }}" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeRenameModal('{{ file.id }}')">&times;</span>
+                <form method="POST" action="{{ url_for('File.rename_file', file_id=file.id) }}">
+                    <label for="new_name">Nuevo Nombre:</label>
+                    <input type="text" id="new_name" name="new_name" required>
+                    <button type="submit">Renombrar</button>
+                </form>
+            </div>
+        </div>
+    </li>
+    {% endfor %}
+</ul>
+
+<h3>Archivos</h3>
+<ul>
+    {% for file in files if file.file_type == 'file' %}
+    <li>
+        <a href="#" onclick="showModal('modal{{ file.id }}')">{{ file.filename }}</a>
+
+        <div id="modal{{ file.id }}" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="hideModal('modal{{ file.id }}')">&times;</span>
+                <p><strong>ID:</strong> {{ file.id }}</p>
+                <p><strong>Nombre de usuario:</strong> {{ file.id_usuario }}</p>
+                <p><strong>Nombre del archivo:</strong> {{ file.filename }}</p>
+                <p><strong>Ruta del archivo:</strong> {{ file.filepath }}</p>
+                <p><strong>Tipo de archivo:</strong> {{ file.file_type }}</p>
+                <p><strong>Fecha de carga:</strong> {{ file.uploaded_at }}</p>
+
+                <a href="{{ url_for('File.download_file', file_id=file.id) }}">Descargar</a>
+                <button onclick="openRenameModal('{{ file.id }}')">Renombrar</button>
+                <button onclick="openCopyModal('{{ file.id }}')">Copiar</button>
+                <button onclick="openMoveModal('{{ file.id }}')">Mover</button>
+
+                <form method="POST" action="{{ url_for('File.delete_file', file_id=file.id) }}">
+                    <button type="submit" class="btn btn-danger">Eliminar</button>
+                </form>
+                <div id="renameModal{{ file.id }}" class="modal">
+                    <div class="modal-content">
+                        <span class="close" onclick="closeRenameModal('{{ file.id }}')">&times;</span>
+                        <form method="POST" action="{{ url_for('File.rename_file', file_id=file.id) }}">
+                            <label for="new_name">Nuevo Nombre:</label>
+                            <input type="text" id="new_name" name="new_name" required>
+                            <button type="submit">Renombrar</button>
+                        </form>
+                    </div>
+                </div>
+
+                <div id="copyModal{{ file.id }}" class="modal">
+                    <div class="modal-content">
+                        <span class="close" onclick="closeCopyModal('{{ file.id }}')">&times;</span>
+                        <form method="POST" action="{{ url_for('File.copy_file', file_id=file.id) }}">
+                            <label for="destination">Destino:</label>
+                            <input type="text" id="destination" name="destination">
+                            <button type="submit">Copiar</button>
+                        </form>
+                    </div>
+                </div>
+
+                <div id="moveModal{{ file.id }}" class="modal">
+                    <div class="modal-content">
+                        <span class="close" onclick="closeMoveModal('{{ file.id }}')">&times;</span>
+                        <form method="POST" action="{{ url_for('File.move_file', file_id=file.id) }}">
+                            <label for="destination">Destino:</label>
+                            <input type="text" id="destination" name="destination">
+                            <button type="submit">Mover</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </li>
+    {% endfor %}
+</ul>
+{% else %}
+<h3>Directorios</h3>
+<ul>
+    {% if currentdir != '' %}
+    <li>
+        <a href="#" onclick="goUpOneLevel('{{ currentdir }}')"><strong>.. (Subir un nivel)</strong></a>
+    </li>
+    {% endif %}
+</ul>
+{% endif %}
+
+<!-- Modales -->
+<div id="createDirectoryModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="hideModal('createDirectoryModal')">&times;</span>
+        <h2>Create directory</h2>
+        <form method="POST" action="{{ url_for('File.create_directory') }}">
+            <div>
+                <label for="directory name">Subfolder:</label>
+                <input type="text" id="foldername" name="foldername" required>
+                <input type="hidden" name="currentdir" value="{{ currentdir }}">
+            </div>
+            <button type="submit">Create directory</button>
+        </form>
+    </div>
+</div>
+
+<div id="uploadFileModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="hideModal('uploadFileModal')">&times;</span>
+        <h2>Upload File</h2>
+        <form method="POST" enctype="multipart/form-data" action="{{ url_for('File.upload_file') }}">
+            <div>
+                <label for="file">File:</label>
+                <input type="file" id="file" name="file" required>
+                <input type="hidden" name="subfolder" value="{{ currentdir }}">
+            </div>
+            <button type="submit">Upload</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    function goUpOneLevel(currentdir) {
+        let pathParts = currentdir.split('/').filter(part => part.length > 0);
+        pathParts.pop();
+        let newpath = pathParts.join('/');
+        document.cookie = 'currentdir=' + newpath + '; path=/';
+        location.reload();
+    }
+
+    function navigateToFolder(currentdir, foldername) {
+        let newpath = currentdir === '' ? foldername : currentdir + '/' + foldername;
+        document.cookie = 'currentdir=' + newpath + '; path=/';
+        location.reload();
+    }
+
+    function showModal(modalId) {
+        document.getElementById(modalId).style.display = "block";
+    }
+
+    function hideModal(modalId) {
+        document.getElementById(modalId).style.display = "none";
+    }
+
+    function openRenameModal(modalId) {
+        document.getElementById('renameModal' + modalId).style.display = 'block';
+    }
+
+    function closeRenameModal(modalId) {
+        document.getElementById('renameModal' + modalId).style.display = 'none';
+    }
+
+    function openCopyModal(modalId) {
+        document.getElementById('copyModal' + modalId).style.display = 'block';
+    }
+
+    function closeCopyModal(modalId) {
+        document.getElementById('copyModal' + modalId).style.display = 'none';
+    }
+
+    function openMoveModal(modalId) {
+        document.getElementById('moveModal' + modalId).style.display = 'block';
+    }
+
+    function closeMoveModal(modalId) {
+        document.getElementById('moveModal' + modalId).style.display = 'none';
+    }
+</script>
+
+<style>
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgb(0, 0, 0);
+        background-color: rgba(0, 0, 0, 0.4);
+        padding-top: 60px;
+    }
+
+    .modal-content {
+        background-color: #fefefe;
+        margin: 5% auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%;
+    }
+
+    .close {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+    }
+
+    .close:hover,
+    .close:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
+    }
+</style>
+
+{% endblock %}

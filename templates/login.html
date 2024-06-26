@@ -3,32 +3,32 @@
 {% block title %}Login{% endblock %}
 
 {% block content %}
-<div class="login-container">
-    <h2>Login</h2>
+<div class="max-w-md mx-auto mt-10 p-6 bg-white shadow-md rounded-lg">
+    <h2 class="text-3xl font-bold text-sky-blue mb-6">Login</h2>
 
     {% if current_user.is_authenticated %}
-    <div class="account-info">
-        <h2>Account Information</h2>
-        <p>Email: {{ current_user.email }}</p>
-        <p>Username: {{ current_user.username }}</p>
-        <a href="{{ url_for('Auth.logout') }}" class="btn">Logout</a>
+    <div>
+        <h2 class="text-xl font-bold text-gray-700 mb-4">Account Information</h2>
+        <p class="text-lg mb-2"><strong>Email:</strong> {{ current_user.email }}</p>
+        <p class="text-lg mb-4"><strong>Username:</strong> {{ current_user.username }}</p>
+        <a href="{{ url_for('Auth.logout') }}" class="text-sky-blue hover:underline text-lg">Logout</a>
     </div>
     {% else %}
     <form method="POST" action="">
         {{ form.hidden_tag() }}
-        <div class="form-group">
-            {{ form.email.label }}<br>
-            {{ form.email(size=32, class="form-control") }}
+        <div class="mb-4">
+            {{ form.email.label(class="block text-gray-700 text-sm font-bold mb-2") }}
+            {{ form.email(class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline") }}
         </div>
-        <div class="form-group">
-            {{ form.password.label }}<br>
-            {{ form.password(size=32, class="form-control") }}
+        <div class="mb-6">
+            {{ form.password.label(class="block text-gray-700 text-sm font-bold mb-2") }}
+            {{ form.password(class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline") }}
         </div>
-        <div class="form-group">
-            {{ form.submit(class="btn btn-primary") }}
+        <div class="flex items-center justify-between">
+            {{ form.submit(class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline") }}
         </div>
     </form>
-    <p>Don't have an account? <a href="{{ url_for('Auth.register') }}" class="btn btn-secondary">Register here</a>.</p>
+    <p class="mt-4 text-center text-sm text-gray-600">Don't have an account? <a href="{{ url_for('Auth.register') }}" class="text-sky-blue hover:underline">Register here</a>.</p>
     {% endif %}
 </div>
 {% endblock %}
